@@ -14,8 +14,16 @@
 #include "soc_osal.h"
 #include "spi.h"
 
+#ifndef debug
+#define debug
+#endif
+
+#ifndef dma_enable
+// #define dma_enable
+#endif
+
 #define SPI_SLAVE_NUM 1
-#define SPI_FREQUENCY 2
+#define SPI_FREQUENCY 3
 #define SPI_CLK_POLARITY 0
 #define SPI_CLK_PHASE 0
 #define SPI_FRAME_FORMAT 0
@@ -28,15 +36,53 @@
 #define SPI_TASK_DURATION_MS 500
 #define SPI_TASK_PRIO OSAL_TASK_PRIORITY_HIGH
 
-#define SPI_TRANSFER_LEN 20
+#define LED_COUNT 1
+#define LED_DATE_LEN 3 ///< 一个 LED 的数据长度（即3个字节，GRB顺序）
+#define SPI_TRANSFER_LEN                                                       \
+  ((LED_DATE_LEN * 4) * LED_COUNT) ///< 一个 LED 的数据经过编码后的长度
 
-#ifndef debug
-#define debug
-#endif
+typedef struct {
+  uint8_t green;
+  uint8_t red;
+  uint8_t blue;
+} grb_t;
 
-#ifndef dma_enable
-// #define dma_enable
+grb_t original_led_data = {0x0f, 0x0f,
+                           0x00}; // 例子：绿色最大亮度，红色和蓝色为0
+
+/**
+ * @brief 将原始数据编码为 LED 驱动器可识别的数据
+ *
+ * @param input_data 原始数据 @ref grb_t
+ * @param output_data 编码后的数据 (每个字节包含两个 4-bit 编码信息)
+ * @param length  数据长度 (LED 数量) @ref LED_COUNT
+ */
+void encode_led_data(grb_t *input_data, uint8_t *output_data, uint32_t length) {
+  for (uint32_t i = 0; i < length; i++) {
+    uint8_t *byte_ptr = (uint8_t *)(&input_data[i]);
+    for (uint8_t color = 0; color < LED_DATE_LEN; color++) {
+      uint8_t byte = byte_ptr[color];
+      for (uint8_t bit_pair = 0; bit_pair < 4; bit_pair++) {
+        uint8_t bit_val_1 = (byte >> (7 - 2 * bit_pair)) & 0x01; // 取出高位
+        uint8_t bit_val_2 = (byte >> (6 - 2 * bit_pair)) & 0x01; // 取出低位
+
+        uint8_t encoded_val_1 = (bit_val_1 == 0) ? 0b1000 : 0b1100;
+        uint8_t encoded_val_2 = (bit_val_2 == 0) ? 0b1000 : 0b1100;
+
+        // 将两个 4-bit 编码信息组合到一个字节
+        output_data[i * LED_DATE_LEN * 4 + color * 4 + bit_pair] =
+            (encoded_val_1 << 4) | encoded_val_2;
+      }
+    }
+  }
+#ifdef debug
+  osal_printk("encode_led_data: ");
+  for (uint32_t i = 0; i < length * LED_DATE_LEN * 4; i++) {
+    osal_printk("0x%02x ", output_data[i]);
+  }
+  osal_printk("\r\n");
 #endif
+}
 
 static void app_spi_init_pin(void) {
   errcode_t ret = uapi_pin_set_mode(S_MGPIO11, HAL_PIO_SPI0_TXD);
@@ -109,9 +155,12 @@ static void *spi_master_task(const char *arg) {
 
   /* SPI data config. */
   uint8_t tx_data[SPI_TRANSFER_LEN] = {0};
-  for (uint32_t loop = 0; loop < SPI_TRANSFER_LEN; loop++) {
-    tx_data[loop] = (loop & 0xFF);
-  }
+  // for (uint32_t loop = 0; loop < SPI_TRANSFER_LEN; loop++) {
+  //   tx_data[loop] = (loop & 0xFF);
+  // }
+
+  encode_led_data(&original_led_data, tx_data,
+                  LED_COUNT); // 编码一个 LED 的数据
 
   spi_xfer_data_t data = {
       .tx_buff = tx_data,
@@ -123,6 +172,7 @@ static void *spi_master_task(const char *arg) {
     osal_printk("spi%d master send start!\r\n", SPI_BUS_0);
     if (uapi_spi_master_write(SPI_BUS_0, &data, 0xFFFFFFFF) == ERRCODE_SUCC) {
       osal_printk("spi%d master send succ!\r\n", SPI_BUS_0);
+      return NULL;
     } else {
       continue;
     }
