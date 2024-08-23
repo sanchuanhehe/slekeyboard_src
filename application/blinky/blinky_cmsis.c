@@ -47,8 +47,8 @@ typedef struct {
   uint8_t blue;
 } grb_t;
 
-grb_t original_led_data = {0x0f, 0x0f,
-                           0x00}; // 例子：绿色最大亮度，红色和蓝色为0
+grb_t original_led_data = {0x00, 0x00,
+                           0xff}; // 例子：绿色最大亮度，红色和蓝色为0
 
 /**
  * @brief 将原始数据编码为 LED 驱动器可识别的数据
@@ -85,7 +85,7 @@ void encode_led_data(grb_t *input_data, uint8_t *output_data, uint32_t length) {
 }
 
 static void app_spi_init_pin(void) {
-  errcode_t ret = uapi_pin_set_mode(S_MGPIO11, HAL_PIO_SPI0_TXD);
+  errcode_t ret = uapi_pin_set_mode(S_MGPIO0, HAL_PIO_SPI0_TXD);
   if (ret != ERRCODE_SUCC) {
     osal_printk("set pin mode failed .\n");
   }
