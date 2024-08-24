@@ -7,12 +7,10 @@
  * 2023-06-25, Create file. \n
  */
 #include "led.h"
-#include "app_init.h"
 #include "dma.h"
 #include "osal_debug.h"
 #include "pinctrl.h"
 #include "platform_core.h"
-#include "soc_osal.h"
 
 #ifndef debug
 #define debug
