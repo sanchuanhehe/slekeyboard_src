@@ -7,12 +7,12 @@
  * 2023-06-25, Create file. \n
  */
 #include "led.h"
+#include "common_def.h"
 #include "dma.h"
 #include "osal_debug.h"
+#include "osal_task.h"
 #include "pinctrl.h"
 #include "platform_core.h"
-#include "osal_task.h"
-#include "common_def.h" 
 #include "soc_osal.h"
 
 #ifndef debug
@@ -57,7 +57,7 @@ void encode_led_data(grb_t *input_data, uint8_t *output_data, uint32_t length) {
 #endif
 }
 
-static inline void app_spi_init_pin(pin_t pin, spi_bus_t bus) {
+static inline void app_spi_init_pin(pin_t pin, spi_bus_t bus) {// TODO: 增加防止重复初始化的逻辑
   errcode_t ret;
 #ifdef debug
   osal_printk("spi%d pinmux start!\r\n", bus); // TODO:debug
@@ -112,9 +112,10 @@ app_spi_master_init_config(spi_bus_t bus) {
   config.tmod = SPI_TMOD;
   config.sste = 1;
 
-  ext_config.qspi_param.wait_cycles = SPI_WAIT_CYCLES;
+  ext_config.qspi_param.wait_cycles = SPI_WAIT_CYCLES; // TODO: what is this?
   errcode_t ret;
 #ifdef dma_enable
+  ext_config.tx_use_dma = true;
 #ifdef debug
   osal_printk("spi%d master dma init start!\r\n", bus); // TODO:debug
 #endif
@@ -193,5 +194,6 @@ void *spi_led_transfer_task(led_data_p arg) {
     }
   }
   osal_kfree(tx_data);
+  uapi_pin_set_mode(arg->pin, HAL_PIO_FUNC_GPIO);
   return NULL;
 }
