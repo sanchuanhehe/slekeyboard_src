@@ -11,6 +11,9 @@
 #include "osal_debug.h"
 #include "pinctrl.h"
 #include "platform_core.h"
+#include "osal_task.h"
+#include "common_def.h" 
+#include "soc_osal.h"
 
 #ifndef debug
 #define debug
