@@ -41,3 +41,39 @@
 - **LED_DATE_LEN**: 定义了单个 LED 的数据长度为 3（GRB 顺序）。
 - **SPI 引脚与总线**: 目前仅支持 SPI 引脚与 SPI 总线的通信。
 - **错误处理**: 在创建任务和设置优先级时提供了基本的错误处理。
+
+## 示例代码
+
+```c
+static void spi_master_entry(void) {
+#define SPI_TASK_STACK_SIZE 0x2000
+#define SPI_TASK_PRIO OSAL_TASK_PRIORITY_HIGH
+  int ret;
+  osal_task *taskid;
+  // 创建任务调度
+  osal_kthread_lock();
+  grb_t led_data = {0, 1, 0};
+  led_data_t led_data_config = {
+      .led_data = &led_data,
+      .length = 1,
+      .pin = S_MGPIO0,
+      .bus = SPI_BUS_0,
+  };
+  // 创建任务
+  taskid = osal_kthread_create((osal_kthread_handler)spi_led_transfer_task,
+                               &led_data_config, "spi_master_task",
+                               SPI_TASK_STACK_SIZE);
+  if (taskid == NULL) {
+    osal_printk("create spi_master_task failed .\n");
+    return;
+  }
+  ret = osal_kthread_set_priority(taskid, SPI_TASK_PRIO);
+  if (ret != OSAL_SUCCESS) {
+    osal_printk("set spi_master_task priority failed .\n");
+  }
+  osal_kthread_unlock();
+}
+
+/* Run the spi_master_entry. */
+app_run(spi_master_entry);
+```
