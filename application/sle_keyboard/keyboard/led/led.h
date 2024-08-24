@@ -12,7 +12,7 @@ typedef struct {
   uint8_t green;
   uint8_t red;
   uint8_t blue;
-} grb_t, *grb_p;
+} __attribute__((packed)) grb_t, *grb_p;
 
 /**
  * @brief LED 驱动数据结构
