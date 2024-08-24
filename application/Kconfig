@@ -4,6 +4,8 @@
 #===============================================================================
 osource "application/samples/Kconfig"
 
+osource "application/sle_keyboard/Kconfig"
+
 config APP_ENABLE
     bool
     prompt "Enable APP."

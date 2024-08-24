@@ -1,0 +1,23 @@
+#===============================================================================
+# @brief    Kconfig file.
+# Copyright (c) @CompanyNameMagicTag 2023-2023. All rights reserved.
+#===============================================================================
+config SLE_KEYBOARD_ENABLE
+    bool
+    prompt "Enable SLE Keyboard."
+    default n
+    help
+        This option means support SLE Keyboard.
+
+choice
+    prompt "Select Dongle or Keyboard"
+    default SELECT_KEYBOARD
+    depends on SLE_KEYBOARD_ENABLE
+
+config SELECT_DONGLE
+    bool "Dongle"
+
+config SELECT_KEYBOARD
+    bool "Keyboard"
+
+endchoice

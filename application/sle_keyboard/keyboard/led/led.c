@@ -47,8 +47,8 @@ typedef struct {
   uint8_t blue;
 } grb_t;
 
-grb_t original_led_data = {0x00, 0x00,
-                           0xff}; // 例子：绿色最大亮度，红色和蓝色为0
+grb_t original_led_data = {0x01, 0x00,
+                           0x00}; // 例子：绿色最大亮度，红色和蓝色为0
 
 /**
  * @brief 将原始数据编码为 LED 驱动器可识别的数据
@@ -146,6 +146,14 @@ app_spi_master_init_config(void) {
 }
 
 static void *spi_master_task(const char *arg) {
+  if(arg != NULL)
+  {
+    osal_printk("spi_master_task arg: %s\n", arg);
+  }
+  else
+  {
+    osal_printk("spi_master_task arg is NULL\n");
+  }
   unused(arg);
   /* SPI pinmux. */
   app_spi_init_pin();
