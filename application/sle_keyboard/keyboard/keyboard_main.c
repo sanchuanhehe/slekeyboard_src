@@ -4,6 +4,7 @@
 #include "platform_core.h"
 #include "soc_osal.h"
 #include "trng.h"
+#include "keyscan_task.h"
 
 static void spi_master_entry(void) {
 #define SPI_TASK_STACK_SIZE 0x2000
@@ -54,6 +55,17 @@ static void spi_master_entry(void) {
   ret = osal_kthread_set_priority(taskid, SPI_TASK_PRIO);
   if (ret != OSAL_SUCCESS) {
     osal_printk("set spi_master_task priority failed .\n");
+  }
+  //keyscan_task
+  taskid = osal_kthread_create((osal_kthread_handler)keyscan_task, NULL,
+                               "keyscan_task", SPI_TASK_STACK_SIZE);
+  if (taskid == NULL) {
+    osal_printk("create keyscan_task failed .\n");
+    return;
+  }
+  ret = osal_kthread_set_priority(taskid, SPI_TASK_PRIO);
+  if (ret != OSAL_SUCCESS) {
+    osal_printk("set keyscan_task priority failed .\n");
   }
   osal_kthread_unlock();
 }
