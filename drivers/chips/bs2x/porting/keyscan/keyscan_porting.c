@@ -194,9 +194,6 @@ void keyscan_porting_pin_set(void) {
     reg16_setbits(KEYSCAN_SIX_TYPE_ROW1_REG, EVEN_SEL_BIT, BIT_SEL_LEN,
                   g_gpio_six_map[gpio_index]);
   } else if (g_keyboard_type_sel == CUSTOME_KEYS_TYPE) {
-
-    osal_printk("CUSTOME_KEYS_TYPE\n");
-
     for (int i = 0; i < KEYSCAN_COL_NUM; i++) {
       uapi_pin_set_mode(g_gpio_map[i], HAL_PIO_KEY_SCAN);
     }
@@ -221,7 +218,7 @@ void keyscan_porting_pin_set(void) {
         break; // 如果超出范围，退出循环
       }
     }
-    osal_printk("gpio_index = %d\n", gpio_index);
+
     gpio_index = KEYSCAN_MAX_COL;
     // 配置行引脚 (ROW)
     for (int i = 0; i < (KEYSCAN_ROW_NUM / 2 + 1); i++) {
@@ -239,6 +236,5 @@ void keyscan_porting_pin_set(void) {
         break; // 如果超出范围，退出循环
       }
     }
-    osal_printk("gpio_index = %d\n", gpio_index);
   }
 }
