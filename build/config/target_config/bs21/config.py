@@ -25,16 +25,16 @@ target = {
         "ram_component": [
             "test_adc",
             "demo",
-            # "test_i2s",
-            # "test_qdec",
-            # "test_keyscan",
+            "-:test_i2s",#TODO: remove this line
+            "-:test_qdec",#TODO: remove this line
+            "-:test_keyscan",#TODO: remove this line
             "std_rom_lds_porting",
             "i2s",
             "standard_porting",
             "liteos_208_6_0_b017",
             "dfx_porting",
             "algorithm",
-            # "test_pinctrl",
+            "-:test_pinctrl",
             "sfc_porting",
             "systick_port",
             "tcxo_port",
@@ -53,7 +53,7 @@ target = {
             "hal_rtc_unified",
             "rtc_unified_port",
             "timer_port",
-            # "test_pdm",
+            "-:test_pdm",#TODO: remove this line
             "-:libboundscheck",
             "app_init",
             "update_common",
@@ -64,7 +64,7 @@ target = {
             "update_storage_porting",
             "ota_upgrade",
             "pm_sys",
-            "-:test_usb_unified",
+            "-:test_usb_unified",#TODO: remove this line
             "sle_keyboard",
         ],
         "rom_component": ["bgtp_rom", "libboundscheck", "bt_host_rom", "bg_common_rom"],
