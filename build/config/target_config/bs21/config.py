@@ -11,19 +11,19 @@ target = {
         "defines": [
             "SUPPORT_EXTERN_FLASH",
             "SUPPORT_BT_UPG",
-            "PLT_TEST_ENABLE",
+            # "PLT_TEST_ENABLE",
             "BGLE_TASK_EXIST",
-            "PRE_ASIC",
-            "BS21_PRODUCT_EVB",
-            "AT_ONLY",
+            # "PRE_ASIC",
+            # "BS21_PRODUCT_EVB",
+            # "AT_ONLY",
             "-:SW_UART_DEBUG",
-            "AT_COMMAND",
+            # "AT_COMMAND",
             "XO_32M_CALI",
             "TEST_SUITE",
             "SAMPLE_SUPPORT_CMD",
         ],
         "ram_component": [
-            "test_adc",
+            "-:test_adc",#TODO: remove this line
             "demo",
             "-:test_i2s",#TODO: remove this line
             "-:test_qdec",#TODO: remove this line

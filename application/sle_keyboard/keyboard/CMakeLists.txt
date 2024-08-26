@@ -2,6 +2,8 @@ set(SOURCES_LIST
     ${CMAKE_CURRENT_SOURCE_DIR}/led/led.c
     ${CMAKE_CURRENT_SOURCE_DIR}/keyboard_main.c
     ${CMAKE_CURRENT_SOURCE_DIR}/keyscan/keyscan_task.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/keyscan/sle_keyboard_server.c
+    ${CMAKE_CURRENT_SOURCE_DIR}/keyscan/sle_keyboard_server_adv.c
 )
 set(SOURCES "${SOURCES}" ${SOURCES_LIST} PARENT_SCOPE)
 
