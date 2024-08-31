@@ -73,6 +73,7 @@ static void spi_master_entry(void) {
     taskid = osal_kthread_create((osal_kthread_handler)spi_led_transfer_task,
                                  &led_data_config, "spi_master_task",
                                  SPI_TASK_STACK_SIZE);
+    osal_msleep(10);///< 100ms延时, 防止任务创建失败
     if (taskid == NULL) {
       osal_printk("create spi_master_task %d failed .\n", j);
       return;
