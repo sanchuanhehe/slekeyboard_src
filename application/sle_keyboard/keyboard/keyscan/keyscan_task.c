@@ -10,15 +10,17 @@
 #include "app_init.h"
 #include "cmsis_os2.h"
 #include "common_def.h"
+#include "gadget/f_hid.h"
 #include "keyscan.h"
 #include "keyscan_porting.h"
 #include "osal_debug.h"
 #include "pinctrl.h"
+#include "sle_device_discovery.h"
 #include "sle_errcode.h"
 #include "sle_keyboard_server.h"
 #include "sle_keyboard_server_adv.h"
 #include "soc_osal.h"
-#include "sle_device_discovery.h"
+#include "usb_init_keyboard_app.h"
 
 #ifndef debug
 #define debug
@@ -44,6 +46,10 @@
 #define SLE_KEYBOARD_SERVER_MSG_QUEUE_MAX_SIZE 32
 #define SLE_KEYBOARD_SERVER_QUEUE_DELAY 0xFFFFFFFF
 #define SLE_ADV_HANDLE_DEFAULT 1
+
+#ifndef ENANLE_USB_HID_KEYBOARD
+#define ENANLE_USB_HID_KEYBOARD
+#endif
 
 typedef struct usb_hid_keyboard_report {
   uint8_t kind;
@@ -187,6 +193,22 @@ static void sle_keyboard_server_rx_buf_init(uint8_t *buffer_addr,
 
 LOS_MEM_POOL_STATUS status;
 static uint32_t g_at_uart_recv_cnt = 0;
+
+#ifdef ENANLE_USB_HID_KEYBOARD
+static int g_usb_keyscan_hid_index = -1;
+static void usb_keyscan_send_data(usb_hid_keyboard_report_t *rpt) {
+  rpt->kind = 0x1;
+
+  int32_t ret = fhid_send_data(g_usb_keyscan_hid_index, (char *)rpt,
+                               USB_KEYBOARD_REPORTER_LEN);
+  if (ret == -1) {
+    osal_printk("send data falied! ret:%d\n", ret);
+    return;
+  }
+}
+
+#endif
+
 static int app_keyscan_report_callback(int key_nums, uint8_t key_values[]) {
 #ifdef debug
   osal_printk("key_nums = %d, key_values = ", key_nums);
@@ -202,13 +224,6 @@ static int app_keyscan_report_callback(int key_nums, uint8_t key_values[]) {
       g_at_uart_recv_cnt);
 #endif
   uint8_t normal_key_num = 0;
-
-  if (sle_keyboard_client_is_connected() == 0) {
-    #ifdef debug
-    osal_printk("sle_keyboard_client_is_connected fail!\r\n");
-    #endif
-    return 1;
-  }
   if (memset_s(&g_hid_keyboard_report, sizeof(g_hid_keyboard_report), 0,
                sizeof(g_hid_keyboard_report)) != EOK) {
     return 0;
@@ -225,16 +240,33 @@ static int app_keyscan_report_callback(int key_nums, uint8_t key_values[]) {
     }
   }
   g_hid_keyboard_report.kind = 0x01;
-  sle_keyboard_server_send_report_by_handle(
-      (uint8_t *)(uintptr_t)&g_hid_keyboard_report,
-      sizeof(usb_hid_keyboard_report_t));
+  if (sle_keyboard_client_is_connected() == 0) {
+#ifdef debug
+    osal_printk("sle_keyboard_client_is_connected fail!\r\n");
+#endif
+#ifdef ENANLE_USB_HID_KEYBOARD
+    usb_keyscan_send_data(&g_hid_keyboard_report);
+#endif
+    return 1;
+  } else {
+    sle_keyboard_server_send_report_by_handle(
+        (uint8_t *)(uintptr_t)&g_hid_keyboard_report,
+        sizeof(usb_hid_keyboard_report_t));
+  }
   return 1;
-  return 0;
 }
 
 void *keyscan_task(const char *arg) {
   unused(arg);
   osal_printk("enter sle_keyboard_task!\r\n");
+#ifdef ENANLE_USB_HID_KEYBOARD
+  int index = usb_init_keyboard_app(DEV_HID);
+  if (index < 0) {
+    osal_printk("usb_init_keyboard_app fail!\r\n");
+    return NULL;
+  }
+  g_usb_keyscan_hid_index = index;
+#endif
   errcode_t ret;
 #define SLE_KEYBOARD_SERVER_MSG_QUEUE_LEN 5
 #define SLE_KEYBOARD_SERVER_MSG_QUEUE_MAX_SIZE 32
@@ -300,6 +332,9 @@ void *keyscan_task(const char *arg) {
     }
     rx_length = SLE_KEYBOARD_SERVER_MSG_QUEUE_MAX_SIZE;
   }
+#ifdef ENANLE_USB_HID_KEYBOARD
+  usb_deinit_keyscan_app();
+#endif
   sle_keyboard_server_delete_msgqueue();
   uapi_keyscan_deinit();
   return NULL;

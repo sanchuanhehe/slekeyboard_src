@@ -27,5 +27,6 @@
         "KylinIDETeam.cmake-intellisence"
       ]
     }
-  }
+  },
+  "forwardPorts": [3333,3333]
 }
