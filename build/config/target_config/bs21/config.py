@@ -20,7 +20,7 @@ target = {
             # "AT_COMMAND",
             "XO_32M_CALI",
             "TEST_SUITE",
-            "SAMPLE_SUPPORT_CMD",
+            # "SAMPLE_SUPPORT_CMD",
         ],
         "ram_component": [
             "-:test_adc",#TODO: remove this line
