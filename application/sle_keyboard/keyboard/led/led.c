@@ -18,7 +18,7 @@
 #include "soc_osal.h"
 
 #ifndef debug
-#define debug
+// #define debug
 #endif
 
 #ifndef dma_enable
