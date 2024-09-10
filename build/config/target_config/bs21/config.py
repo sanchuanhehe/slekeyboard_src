@@ -16,7 +16,7 @@ target = {
             # "PRE_ASIC",
             # "BS21_PRODUCT_EVB",
             # "AT_ONLY",
-            "-:SW_UART_DEBUG",
+            "SW_UART_DEBUG",
             # "AT_COMMAND",
             "XO_32M_CALI",
             "TEST_SUITE",

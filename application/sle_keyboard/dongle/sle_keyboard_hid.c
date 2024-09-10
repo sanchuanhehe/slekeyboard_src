@@ -44,6 +44,7 @@ static uint8_t g_report_desc_hid[ ] = {
     usage_page(1),      0x01,
     usage(1),           0x06,
     collection(1),      0x01,
+
     report_id(1),       0x01,
 
     usage_page(1),      0x07,
@@ -83,6 +84,7 @@ static uint8_t g_report_desc_hid[ ] = {
     usage_page(1),      0x01,
     usage(1),           0x02,
     collection(1),      0x01,
+
     report_id(1),       0x02,
 
     usage(1),           0x01,
@@ -96,9 +98,11 @@ static uint8_t g_report_desc_hid[ ] = {
     logical_minimum(1), 0x00,
     logical_maximum(1), 0x01,
     input(1),           0x02,
+
     report_count(1),    0x01,
     report_size(1),     0x05,
     input(1),           0x01,
+
     report_count(1),    0x03,
     report_size(1),     0x08,
     usage_page(1),      0x01,
@@ -108,8 +112,10 @@ static uint8_t g_report_desc_hid[ ] = {
     logical_minimum(1), 0x81,
     logical_maximum(1), 0x7f,
     input(1),           0x06,
+
     end_collection(0),
     end_collection(0),
+    
     usage_page(2), 0xB1, 0xFF,
     usage(1),           0x1,
     collection(1),      0x01,
@@ -122,6 +128,7 @@ static uint8_t g_report_desc_hid[ ] = {
     logical_minimum(1), 0,
     logical_maximum(1), 0xff,
     output(1),           2,
+
     end_collection(0),
     end_collection(0),
 };

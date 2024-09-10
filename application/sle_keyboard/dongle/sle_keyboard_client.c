@@ -105,6 +105,8 @@ static void sle_keyboard_client_sample_seek_disable_cbk(errcode_t status) {
         "%s sle_keyboard_client_sample_seek_disable_cbk,status error\r\n",
         SLE_KEYBOARD_DONGLE_LOG);
   } else {
+    osal_printk("%s sle_keyboard_client_sample_seek_disable_cbk,connect remote device!\r\n",
+                SLE_KEYBOARD_DONGLE_LOG);
     sle_remove_paired_remote_device(&g_sle_keyboard_remote_addr);
     sle_connect_remote_device(&g_sle_keyboard_remote_addr);
     osal_mdelay(SLE_KEYBOARD_TASK_DELAY_MS);
@@ -131,8 +133,7 @@ static void sle_keyboard_client_sample_connect_state_changed_cbk(
   errcode_t ret = sle_read_remote_device_rssi(g_sle_keyboard_conn_id);
   if (ret != ERRCODE_BT_SUCCESS) {
     osal_printk("%s read rssi failed\r\n", SLE_KEYBOARD_DONGLE_LOG);
-  }
-  else{
+  } else {
     osal_printk("%s read rssi success\r\n", SLE_KEYBOARD_DONGLE_LOG);
     osal_printk("ret: %d\n", ret);
   }
@@ -189,8 +190,7 @@ static void sle_keyboard_client_sample_exchange_info_cbk(
   errcode_t ret = sle_read_remote_device_rssi(g_sle_keyboard_conn_id);
   if (ret != ERRCODE_BT_SUCCESS) {
     osal_printk("%s read rssi failed\r\n", SLE_KEYBOARD_DONGLE_LOG);
-  }
-  else{
+  } else {
     osal_printk("%s read rssi success\r\n", SLE_KEYBOARD_DONGLE_LOG);
     osal_printk("ret: %d\n", ret);
   }
