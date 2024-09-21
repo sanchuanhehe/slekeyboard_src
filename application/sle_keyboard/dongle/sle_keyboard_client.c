@@ -64,6 +64,8 @@ void sle_keyboard_start_scan(void) {
 }
 
 static void sle_keyboard_client_sample_sle_enable_cbk(errcode_t status) {
+  osal_printk("%s sle_keyboard_client_sample_sle_enable_cbk,status:%d\r\n",
+              SLE_KEYBOARD_DONGLE_LOG, status);
   if (status != 0) {
     osal_printk("%s sle_keyboard_client_sample_sle_enable_cbk,status error\r\n",
                 SLE_KEYBOARD_DONGLE_LOG);
@@ -75,6 +77,8 @@ static void sle_keyboard_client_sample_sle_enable_cbk(errcode_t status) {
 }
 
 static void sle_keyboard_client_sample_seek_enable_cbk(errcode_t status) {
+  osal_printk("%s sle_keyboard_client_sample_seek_enable_cbk,status:%d\r\n",
+              SLE_KEYBOARD_DONGLE_LOG, status);
   if (status != 0) {
     osal_printk(
         "%s sle_keyboard_client_sample_seek_enable_cbk,status error\r\n",
@@ -84,6 +88,8 @@ static void sle_keyboard_client_sample_seek_enable_cbk(errcode_t status) {
 
 static void sle_keyboard_client_sample_seek_result_info_cbk(
     sle_seek_result_info_t *seek_result_data) {
+  osal_printk("%s sle_keyboard_client_sample_seek_result_info_cbk\r\n",
+              SLE_KEYBOARD_DONGLE_LOG);
   if (seek_result_data == NULL || seek_result_data->data == NULL) {
     osal_printk("%s status error\r\n", SLE_KEYBOARD_DONGLE_LOG);
     return;
@@ -100,12 +106,15 @@ static void sle_keyboard_client_sample_seek_result_info_cbk(
 }
 
 static void sle_keyboard_client_sample_seek_disable_cbk(errcode_t status) {
+  osal_printk("%s sle_keyboard_client_sample_seek_disable_cbk,status:%d\r\n",
+              SLE_KEYBOARD_DONGLE_LOG, status);
   if (status != 0) {
     osal_printk(
         "%s sle_keyboard_client_sample_seek_disable_cbk,status error\r\n",
         SLE_KEYBOARD_DONGLE_LOG);
   } else {
-    osal_printk("%s sle_keyboard_client_sample_seek_disable_cbk,connect remote device!\r\n",
+    osal_printk("%s sle_keyboard_client_sample_seek_disable_cbk,connect remote "
+                "device!\r\n",
                 SLE_KEYBOARD_DONGLE_LOG);
     sle_remove_paired_remote_device(&g_sle_keyboard_remote_addr);
     sle_connect_remote_device(&g_sle_keyboard_remote_addr);
@@ -138,8 +147,8 @@ static void sle_keyboard_client_sample_connect_state_changed_cbk(
     osal_printk("ret: %d\n", ret);
   }
 
-  osal_printk("%s conn state changed,connect_state:%d, pair_state:%d, "
-              "disc_reason:%d\r\n",
+  osal_printk("%s conn state changed,connect_state:0x%x, pair_state:0x%x, "
+              "disc_reason:0x%x\r\n",
               SLE_KEYBOARD_DONGLE_LOG, conn_state, pair_state, disc_reason);
   g_sle_keyboard_conn_id = conn_id;
   if (conn_state == SLE_ACB_STATE_CONNECTED) {

@@ -373,7 +373,7 @@ sle_keyboard_server_init(ssaps_read_request_callback ssaps_read_callback,
     return ret;
   }
   ret = sle_keyboard_announce_register_cbks();
-  
+
   if (ret != ERRCODE_SLE_SUCCESS) {
     sample_print(
         "%s sle_keyboard_server_init,sle_keyboard_announce_register_cbks fail "

@@ -206,9 +206,9 @@ static void *sle_keyboard_dongle_task(const char *arg)
     }
     // 2. sle keyboard client init
     sle_keyboard_client_init(sle_keyboard_notification_cb, sle_keyboard_indication_cb);
-    while (1) {
-        osDelay(SLE_KEYBOARD_DONGLE_TASK_DELAY_MS);
-    }
+    // while (1) {
+    //     osDelay(SLE_KEYBOARD_DONGLE_TASK_DELAY_MS);
+    // }
     return NULL;
 }
 

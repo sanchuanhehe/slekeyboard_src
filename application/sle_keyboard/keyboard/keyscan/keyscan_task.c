@@ -330,6 +330,9 @@ void *keyscan_task(const char *arg) {
                     SLE_KEYBOARD_SERVER_LOG, ret);
       }
     }
+    if (sle_keyboard_client_is_connected() == 0) {
+      osal_printk("sle_keyboard_client_is_connected fail!\r\n");
+    }
     rx_length = SLE_KEYBOARD_SERVER_MSG_QUEUE_MAX_SIZE;
   }
 #ifdef ENANLE_USB_HID_KEYBOARD
