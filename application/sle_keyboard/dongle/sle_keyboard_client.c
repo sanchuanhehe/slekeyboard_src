@@ -10,7 +10,6 @@
 #include "bts_le_gap.h"
 #include "cmsis_os2.h"
 #include "common_def.h"
-#include "errcode.h"
 #include "osal_debug.h"
 #include "osal_task.h"
 #include "securec.h"
@@ -64,8 +63,6 @@ void sle_keyboard_start_scan(void) {
 }
 
 static void sle_keyboard_client_sample_sle_enable_cbk(errcode_t status) {
-  osal_printk("%s sle_keyboard_client_sample_sle_enable_cbk,status:%d\r\n",
-              SLE_KEYBOARD_DONGLE_LOG, status);
   if (status != 0) {
     osal_printk("%s sle_keyboard_client_sample_sle_enable_cbk,status error\r\n",
                 SLE_KEYBOARD_DONGLE_LOG);
@@ -77,8 +74,6 @@ static void sle_keyboard_client_sample_sle_enable_cbk(errcode_t status) {
 }
 
 static void sle_keyboard_client_sample_seek_enable_cbk(errcode_t status) {
-  osal_printk("%s sle_keyboard_client_sample_seek_enable_cbk,status:%d\r\n",
-              SLE_KEYBOARD_DONGLE_LOG, status);
   if (status != 0) {
     osal_printk(
         "%s sle_keyboard_client_sample_seek_enable_cbk,status error\r\n",
@@ -88,8 +83,6 @@ static void sle_keyboard_client_sample_seek_enable_cbk(errcode_t status) {
 
 static void sle_keyboard_client_sample_seek_result_info_cbk(
     sle_seek_result_info_t *seek_result_data) {
-  osal_printk("%s sle_keyboard_client_sample_seek_result_info_cbk\r\n",
-              SLE_KEYBOARD_DONGLE_LOG);
   if (seek_result_data == NULL || seek_result_data->data == NULL) {
     osal_printk("%s status error\r\n", SLE_KEYBOARD_DONGLE_LOG);
     return;
@@ -106,16 +99,11 @@ static void sle_keyboard_client_sample_seek_result_info_cbk(
 }
 
 static void sle_keyboard_client_sample_seek_disable_cbk(errcode_t status) {
-  osal_printk("%s sle_keyboard_client_sample_seek_disable_cbk,status:%d\r\n",
-              SLE_KEYBOARD_DONGLE_LOG, status);
   if (status != 0) {
     osal_printk(
         "%s sle_keyboard_client_sample_seek_disable_cbk,status error\r\n",
         SLE_KEYBOARD_DONGLE_LOG);
   } else {
-    osal_printk("%s sle_keyboard_client_sample_seek_disable_cbk,connect remote "
-                "device!\r\n",
-                SLE_KEYBOARD_DONGLE_LOG);
     sle_remove_paired_remote_device(&g_sle_keyboard_remote_addr);
     sle_connect_remote_device(&g_sle_keyboard_remote_addr);
     osal_mdelay(SLE_KEYBOARD_TASK_DELAY_MS);
@@ -139,17 +127,10 @@ static void sle_keyboard_client_sample_connect_state_changed_cbk(
     sle_pair_state_t pair_state, sle_disc_reason_t disc_reason) {
   unused(addr);
   unused(pair_state);
-  errcode_t ret = sle_read_remote_device_rssi(g_sle_keyboard_conn_id);
-  if (ret != ERRCODE_BT_SUCCESS) {
-    osal_printk("%s read rssi failed\r\n", SLE_KEYBOARD_DONGLE_LOG);
-  } else {
-    osal_printk("%s read rssi success\r\n", SLE_KEYBOARD_DONGLE_LOG);
-    osal_printk("ret: %d\n", ret);
-  }
-
-  osal_printk("%s conn state changed,connect_state:0x%x, pair_state:0x%x, "
-              "disc_reason:0x%x\r\n",
-              SLE_KEYBOARD_DONGLE_LOG, conn_state, pair_state, disc_reason);
+  osal_printk(
+      "%s connect state changed callback conn_id:0x%02x, conn_state:0x%x, pair_state:0x%x, \
+                 disc_reason:0x%x\r\n",
+      SLE_KEYBOARD_DONGLE_LOG, conn_id, conn_state, pair_state, disc_reason);
   g_sle_keyboard_conn_id = conn_id;
   if (conn_state == SLE_ACB_STATE_CONNECTED) {
     osal_printk("SLE_ACB_STATE_CONNECTED\r\n", SLE_KEYBOARD_DONGLE_LOG);
@@ -196,14 +177,6 @@ static void sle_keyboard_client_sample_exchange_info_cbk(
               SLE_KEYBOARD_DONGLE_LOG, client_id, status);
   osal_printk("%s exchange mtu, mtu size: %d, version: %d.\r\n",
               SLE_KEYBOARD_DONGLE_LOG, param->mtu_size, param->version);
-  errcode_t ret = sle_read_remote_device_rssi(g_sle_keyboard_conn_id);
-  if (ret != ERRCODE_BT_SUCCESS) {
-    osal_printk("%s read rssi failed\r\n", SLE_KEYBOARD_DONGLE_LOG);
-  } else {
-    osal_printk("%s read rssi success\r\n", SLE_KEYBOARD_DONGLE_LOG);
-    osal_printk("ret: %d\n", ret);
-  }
-
   ssapc_find_structure_param_t find_param = {0};
   find_param.type = SSAP_FIND_TYPE_PROPERTY;
   find_param.start_hdl = 1;
